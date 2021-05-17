@@ -1,5 +1,6 @@
 import React from "react";
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 /**
  * This is the highest level of the web app.
@@ -10,6 +11,7 @@ class App extends React.Component {
 
     this.state = {
       camera: null,
+      controls: null,
       cube: null,
       renderer: null,
       scene: null,
@@ -25,16 +27,14 @@ class App extends React.Component {
     const fov = 75;
     const aspect = 2; // the canvas default
     const near = 0.1;
-    const far = 5;
+    const far = 50;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2;
+    camera.position.z = 20;
+    const controls = new OrbitControls( camera, renderer.domElement );
 
     const scene = new THREE.Scene();
 
-    const boxWidth = 1;
-    const boxHeight = 1;
-    const boxDepth = 1;
-    const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+    const geometry = new THREE.DodecahedronGeometry(7);
     const material = new THREE.MeshBasicMaterial({ color: 0x44aa88 });
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
@@ -42,6 +42,7 @@ class App extends React.Component {
     this.setState({
       camera: camera,
       cube: cube,
+      controls: controls,
       renderer: renderer,
       scene: scene,
     });
@@ -77,6 +78,8 @@ class App extends React.Component {
 
     cube.rotation.x = time;
     cube.rotation.y = time;
+
+    this.state.controls.update();
 
     renderer.render(this.state.scene, camera);
 
